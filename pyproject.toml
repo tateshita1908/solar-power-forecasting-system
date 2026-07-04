@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "duckdb>=1.5.4",
     "lightgbm>=4.6.0",
     "matplotlib>=3.11.0",
     "notebook>=7.6.0",
