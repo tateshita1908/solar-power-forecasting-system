@@ -74,6 +74,3 @@ uv run pytest
 * `src/train.py` — trains and saves the LightGBM models to `models/`.
 * `app.py` — Streamlit dashboard: actual vs predicted power for the test window, plus a manual prediction form.
 * `tests/` — unit tests for `src/dataset.py` and `src/train.py`.
-
-## Status / next steps
-`src/predict.py` and `src/visualization.py` are still empty placeholders — not currently used by anything.
