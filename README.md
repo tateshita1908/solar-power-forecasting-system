@@ -1,5 +1,7 @@
 # Solar Power Generation Forecasting
 
+[![CI](https://github.com/tateshita1908/solar-power-forecasting-system/actions/workflows/ci.yml/badge.svg)](https://github.com/tateshita1908/solar-power-forecasting-system/actions/workflows/ci.yml)
+
 This project predicts short-term solar power output (`DC_POWER`) for two solar plants, using historical generation logs and weather sensor data. It follows the CRISP-DM process: data exploration, cleaning, feature engineering, modeling, and evaluation.
 
 ## Results (Plant 1)
