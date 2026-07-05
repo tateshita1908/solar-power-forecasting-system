@@ -1,20 +1,79 @@
-# Solar Power Generation Forecasting System (Plant 1)
-An enterprise-grade predictive analytics pipeline developed under the **CRISP-DM framework** to optimize smart-grid load balancing and energy distribution management.
+# Solar Power Generation Forecasting
 
-## 📈 Executive Summary & Results
-* **Validated Model Accuracy ($R^2$ Score):** `0.9894` (98.94% variance match)
-* **Root Mean Squared Error (RMSE):** `300.79 kW` (A highly reliable boundary for operational safety margins)
-* **Operational Risk Management:** Engineered to exhibit conservative under-estimation traits, functioning as an asset safeguard against grid blackouts and financial utility penalties.
+This project predicts short-term solar power output (`DC_POWER`) for two solar plants, using historical generation logs and weather sensor data. It follows the CRISP-DM process: data exploration, cleaning, feature engineering, modeling, and evaluation.
 
-## 🧭 Project Architecture (CRISP-DM Workflow)
-1. **Business Understanding:** Structured predictive mechanisms to enable proactive grid balancing and model potential daily financial ROI trajectories.
-2. **Data Understanding:** Discovered localized clipping anomalies (midday inverter freezes) and sensor dropouts through extensive Exploratory Data Analysis (EDA).
-3. **Data Preparation:** Built production-grade cleansing pipelines utilizing cross-sectional median imputations to eliminate hardware noise while preserving raw environmental signals.
-4. **Modeling:** Implemented highly optimized **LightGBM Regressors** scaled for non-linear physical interactions.
-5. **Evaluation:** Mitigated structural random-shuffle data leakage by establishing a strict **Chronological Holdout Split** (Training: May 15 – June 11 | Testing: June 12 – June 17), proving genuine real-world prospective forecasting capabilities.
+## Results (Plant 1)
+* **R² score:** 0.9894
+* **RMSE:** 388.50 kW
+* **Validation method:** Chronological split, not random shuffling — trained on May 15–June 11, tested on June 12–June 17. This avoids leaking future information into training, which is a common mistake with time-series data.
 
-## 🛠️ Repository Contents
-* `01_solar_forecasting_plant1.ipynb`: The core data science workspace featuring data prep, feature analysis, and model score sign-off.
+These numbers come from actually re-running [notebooks/01_solar_forecasting_plant1.ipynb](notebooks/01_solar_forecasting_plant1.ipynb) top to bottom — re-run it yourself to confirm.
 
-## 🚀 Next Deployment Milestone
-The model is saved and ready for **Step 6 (Deployment)**, where it will be integrated into an interactive web application using **Streamlit** to act as a live industrial supply-demand optimization dashboard.
+## What was done
+1. **Data understanding:** Explored the raw generation and weather data, and found sensor issues such as midday clipping (inverters flatlining around noon) and missing readings.
+2. **Data preparation:** Cleaned the data by imputing missing/anomalous values using the median across inverters at the same timestamp, then merged generation and weather data on time.
+3. **Modeling:** Trained a LightGBM regressor to predict `DC_POWER` from weather and time features.
+4. **Evaluation:** Used a chronological (not random) train/test split to simulate real forecasting conditions.
+
+## Setup
+
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+
+```bash
+git clone <this-repo>
+cd solar-power-forecasting-system
+uv sync
+```
+
+## Data
+
+The raw CSVs are not included in this repository (see `.gitignore`). Place the following files under `data/raw/` before running the notebooks:
+
+```
+data/raw/Plant_1_Generation_Data.csv
+data/raw/Plant_1_Weather_Sensor_Data.csv
+data/raw/Plant_2_Generation_Data.csv
+data/raw/Plant_2_Weather_Sensor_Data.csv
+```
+
+Source: [Solar Power Generation Data on Kaggle](https://www.kaggle.com/datasets/anikannal/solar-power-generation-data/data)
+
+## How to run
+
+Explore and re-run the analysis in the notebooks:
+
+```bash
+uv run jupyter notebook notebooks/01_solar_forecasting_plant1.ipynb
+```
+
+Run the cells top to bottom. The final cells print the R² and RMSE shown above.
+
+Train the models used by the Streamlit app (saves to `models/`):
+
+```bash
+uv run python -m src.train
+```
+
+Launch the Streamlit dashboard (requires the models above to exist):
+
+```bash
+uv run streamlit run app.py
+```
+
+Run the test suite:
+
+```bash
+uv run pytest
+```
+
+## Repository contents
+* `notebooks/01_solar_forecasting_plant1.ipynb` — Plant 1: data prep, feature analysis, model training and evaluation.
+* `notebooks/02_solar_forecasting_plant2.ipynb` — same pipeline applied to Plant 2.
+* `notebooks/solar_plant_analytics.ipynb` — background notes on how PV plants and the dataset are structured.
+* `src/dataset.py` — preprocessing functions shared by `src/train.py` and `app.py`.
+* `src/train.py` — trains and saves the LightGBM models to `models/`.
+* `app.py` — Streamlit dashboard: actual vs predicted power for the test window, plus a manual prediction form.
+* `tests/` — unit tests for `src/dataset.py` and `src/train.py`.
+
+## Status / next steps
+`src/predict.py` and `src/visualization.py` are still empty placeholders — not currently used by anything.
