@@ -2,3 +2,6 @@ data/
 models/*.txt
 .venv/
 .DS_Store
+.pytest_cache/
+__pycache__/
+*.pyc
