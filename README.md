@@ -62,6 +62,8 @@ Launch the Streamlit dashboard (requires the models above to exist):
 uv run streamlit run app.py
 ```
 
+![Streamlit dashboard showing predicted vs actual power and a manual prediction form](docs/screenshot.png)
+
 Run the test suite:
 
 ```bash
