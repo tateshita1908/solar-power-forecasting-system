@@ -1,7 +1,7 @@
 [project]
 name = "solar-power-forecasting-system"
 version = "0.1.0"
-description = "Add your description here"
+description = "Solar power output forecasting for two PV plants using LightGBM"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
