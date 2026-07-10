@@ -19,14 +19,29 @@ PLANTS = {
         "preprocess": preprocess_plant2_data,
     },
 }
+TRAIN_END_DATE = "2020-06-11"
 TEST_START_DATE = "2020-06-12"
 TEST_END_DATE = "2020-06-17"
+
+# Plant 1's feature table doesn't carry AC_POWER, so a fixed inverter efficiency
+# is used (matching notebooks/01_solar_forecasting_plant1.ipynb). Plant 2's does,
+# so its ratio is estimated from training data instead (matching
+# notebooks/02_solar_forecasting_plant2.ipynb), since Plant 1 and Plant 2 hardware
+# don't convert DC to AC at the same rate.
+PLANT1_AC_CONVERSION_RATIO = 0.92
 
 
 @st.cache_data
 def load_features(plant_name: str) -> pd.DataFrame:
     config = PLANTS[plant_name]
     return config["preprocess"](config["gen_path"], config["weather_path"])
+
+
+def get_ac_conversion_ratio(plant_name: str, df: pd.DataFrame) -> float:
+    if plant_name == "Plant 1":
+        return PLANT1_AC_CONVERSION_RATIO
+    train_df = df[(df["DATE_STR"] <= TRAIN_END_DATE) & (df["DC_POWER"] > 0)]
+    return (train_df["AC_POWER"] / train_df["DC_POWER"]).mean()
 
 
 @st.cache_resource
@@ -58,6 +73,22 @@ test_df["PREDICTED_DC_POWER"] = model.predict(test_df[FEATURES])
 chart_df = test_df.set_index("DATE_TIME")[["DC_POWER", "PREDICTED_DC_POWER"]]
 chart_df.columns = ["Actual", "Predicted"]
 st.line_chart(chart_df)
+
+st.header("Predicted vs actual daily energy yield")
+
+conversion_ratio = get_ac_conversion_ratio(plant_name, df)
+st.caption(
+    f"DC power converted to AC using a {conversion_ratio:.0%} conversion ratio, "
+    f"then integrated over 15-minute intervals (kW x 0.25h = kWh)."
+)
+
+# 15-minute intervals = 0.25 hours; kW x hours = kWh
+test_df["ACTUAL_KWH"] = test_df["DC_POWER"] * conversion_ratio * 0.25
+test_df["PREDICTED_KWH"] = test_df["PREDICTED_DC_POWER"] * conversion_ratio * 0.25
+
+daily_yield = test_df.groupby("DATE_STR")[["ACTUAL_KWH", "PREDICTED_KWH"]].sum()
+daily_yield.columns = ["Actual", "Predicted"]
+st.bar_chart(daily_yield, stack=False)
 
 st.header("Try a prediction")
 st.caption("Enter weather conditions to get a predicted DC power output.")
