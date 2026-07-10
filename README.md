@@ -74,7 +74,7 @@ uv run pytest
 * `notebooks/01_solar_forecasting_plant1.ipynb` — Plant 1: data prep, feature analysis, model training and evaluation.
 * `notebooks/02_solar_forecasting_plant2.ipynb` — same pipeline applied to Plant 2.
 * `notebooks/solar_plant_analytics.ipynb` — background notes on how PV plants and the dataset are structured.
-* `notebooks/sql_analysis.ipynb` — supplementary SQL (DuckDB) demo on the same dataset: joins, window functions, CTEs, grouped aggregation, time bucketing. Not part of the main pipeline — the rest of the project uses pandas.
+* `notebooks/sql_analysis.ipynb` — supplementary SQL (DuckDB) demo: re-derives data understanding (schema, stats, anomaly detection) and data preparation (imputation, feature engineering) from the pandas notebooks in SQL, plus additional query patterns (window functions, CTEs, grouped aggregation, time bucketing). Not part of the main pipeline — the rest of the project uses pandas.
 * `src/dataset.py` — preprocessing functions shared by `src/train.py` and `app.py`.
 * `src/train.py` — trains and saves the LightGBM models to `models/`.
 * `app.py` — Streamlit dashboard: actual vs predicted power for the test window, plus a manual prediction form.
