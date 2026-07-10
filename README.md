@@ -11,6 +11,8 @@ This project predicts short-term solar power output (`DC_POWER`) for two solar p
 
 These numbers come from actually re-running [notebooks/01_solar_forecasting_plant1.ipynb](notebooks/01_solar_forecasting_plant1.ipynb) top to bottom — re-run it yourself to confirm.
 
+**Note:** this notebook trains on one row per inverter per timestamp, keeping full inverter-level detail. `src/train.py` (the model behind the Streamlit app below) instead aggregates to the plant median per timestamp before training — a deliberate simplification for the deployed tool, not an inconsistency — so it reports different metrics (RMSE ~275 kW, R² ~0.995). The two aren't directly comparable; see the note in notebook 01's modeling section for details.
+
 ## What was done
 1. **Data understanding:** Explored the raw generation and weather data, and found sensor issues such as midday clipping (inverters flatlining around noon) and missing readings.
 2. **Data preparation:** Cleaned the data by imputing missing/anomalous values using the median across inverters at the same timestamp, then merged generation and weather data on time.
