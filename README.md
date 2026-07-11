@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/tateshita1908/solar-power-forecasting-system/actions/workflows/ci.yml/badge.svg)](https://github.com/tateshita1908/solar-power-forecasting-system/actions/workflows/ci.yml)
 
-This project predicts short-term solar power output (`DC_POWER`) for two solar plants, using historical generation logs and weather sensor data. It follows the CRISP-DM process: data exploration, cleaning, feature engineering, modeling, and evaluation.
+This project predicts short-term solar power output (`DC_POWER`) for two solar plants, using historical generation logs and weather sensor data. It follows the CRISP-DM process: data exploration, cleaning, feature engineering, modeling, and evaluation — in pandas, and again in **SQL** (see [notebooks/sql_analysis.ipynb](notebooks/sql_analysis.ipynb)).
 
 ## Results (Plant 1)
 * **R² score:** 0.9894
@@ -18,6 +18,7 @@ These numbers come from actually re-running [notebooks/01_solar_forecasting_plan
 2. **Data preparation:** Cleaned the data by imputing missing/anomalous values using the median across inverters at the same timestamp, then merged generation and weather data on time.
 3. **Modeling:** Trained a LightGBM regressor to predict `DC_POWER` from weather and time features.
 4. **Evaluation:** Used a chronological (not random) train/test split to simulate real forecasting conditions.
+5. **SQL:** Re-derived data understanding and preparation for both plants in SQL (joins, window functions, CTEs, grouped aggregation, time bucketing) using DuckDB — see [notebooks/sql_analysis.ipynb](notebooks/sql_analysis.ipynb).
 
 ## Setup
 
